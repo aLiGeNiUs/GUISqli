@@ -15,6 +15,15 @@ class DBInjectionTester:
         self.root.title("Database Injection Vulnerability Tester")
         self.root.geometry("900x700")
         
+        # Create menu bar
+        self.menu_bar = tk.Menu(self.root)
+        self.root.config(menu=self.menu_bar)
+        
+        # Add Help menu
+        help_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="About", command=self.show_about)
+        
         # Create main notebook
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
@@ -50,6 +59,31 @@ class DBInjectionTester:
         self.build_nosql_tab()
         self.build_firewall_bypass_tab()
         self.build_results_tab()
+        
+    def show_about(self):
+        # Create a custom dialog to prevent wrapping
+        dialog = tk.Toplevel(self.root)
+        dialog.title("About")
+        dialog.geometry("400x200")
+        dialog.resizable(False, False)
+
+        # Center the dialog on the parent window
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        # Add the About information with a Label
+        about_info = "APP : GUISqli \n\nDEVELOPER : Ali Al-Kazaly aLiGeNiUs The Hackers \nVERSION : 1.0.0.0  (2025)"
+        label = tk.Label(dialog, text=about_info, font=("Arial", 12), justify="center")
+        label.pack(pady=20)
+
+        # Add an OK button to close the dialog
+        tk.Button(dialog, text="OK", command=dialog.destroy).pack(pady=10)
+
+        # Center the dialog relative to the root window
+        dialog.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() - dialog.winfo_width()) // 2
+        y = self.root.winfo_y() + (self.root.winfo_height() - dialog.winfo_height()) // 2
+        dialog.geometry(f"+{x}+{y}")
     
     def build_setup_tab(self):
         frame = ttk.LabelFrame(self.setup_tab, text="Target Configuration")
@@ -786,7 +820,6 @@ id=1&id=' OR '1'='1
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save results: {str(e)}")
 
-
 class DatabaseSimulator:
     """A simple database simulator for testing the tool locally"""
     
@@ -827,19 +860,16 @@ class DatabaseSimulator:
         except sqlite3.Error as e:
             return f"SQL Error: {str(e)}"
 
-
 def start_simulation_server():
     """Start a local server for testing the tool"""
     # This would implement a simple HTTP server with vulnerable endpoints
     # Not implemented in this prototype
     pass
 
-
 def main():
     root = tk.Tk()
     app = DBInjectionTester(root)
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()
